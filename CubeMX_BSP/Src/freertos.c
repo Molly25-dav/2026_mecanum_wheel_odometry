@@ -49,29 +49,6 @@ typedef StaticTask_t osStaticThreadDef_t;
 
 /* USER CODE END Variables */
 /* Definitions for chassis */
-osThreadId_t chassisHandle;
-uint32_t chassisBuffer[ 1024 ];
-osStaticThreadDef_t chassisControlBlock;
-const osThreadAttr_t chassis_attributes = {
-  .name = "chassis",
-  .cb_mem = &chassisControlBlock,
-  .cb_size = sizeof(chassisControlBlock),
-  .stack_mem = &chassisBuffer[0],
-  .stack_size = sizeof(chassisBuffer),
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for imu */
-osThreadId_t imuHandle;
-uint32_t imuBuffer[ 128 ];
-osStaticThreadDef_t imuControlBlock;
-const osThreadAttr_t imu_attributes = {
-  .name = "imu",
-  .cb_mem = &imuControlBlock,
-  .cb_size = sizeof(imuControlBlock),
-  .stack_mem = &imuBuffer[0],
-  .stack_size = sizeof(imuBuffer),
-  .priority = (osPriority_t) osPriorityNormal,
-};
 /* Definitions for observer */
 osThreadId_t observerHandle;
 uint32_t observerBuffer[ 512 ];
@@ -85,27 +62,13 @@ const osThreadAttr_t observer_attributes = {
   .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for vofa */
-osThreadId_t vofaHandle;
-uint32_t vofaBuffer[ 128 ];
-osStaticThreadDef_t vofaControlBlock;
-const osThreadAttr_t vofa_attributes = {
-  .name = "vofa",
-  .cb_mem = &vofaControlBlock,
-  .cb_size = sizeof(vofaControlBlock),
-  .stack_mem = &vofaBuffer[0],
-  .stack_size = sizeof(vofaBuffer),
-  .priority = (osPriority_t) osPriorityBelowNormal,
-};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 
 /* USER CODE END FunctionPrototypes */
 
-void chassis_task(void *argument);
-extern void imu_task(void *argument);
 extern void mecanum_wheel(void *argument);
-extern void vofa_task(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -163,16 +126,12 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* creation of chassis */
-  chassisHandle = osThreadNew(chassis_task, NULL, &chassis_attributes);
-
   /* creation of imu */
-  imuHandle = osThreadNew(imu_task, NULL, &imu_attributes);
 
   /* creation of observer */
   observerHandle = osThreadNew(mecanum_wheel, NULL, &observer_attributes);
 
   /* creation of vofa */
-  vofaHandle = osThreadNew(vofa_task, NULL, &vofa_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
